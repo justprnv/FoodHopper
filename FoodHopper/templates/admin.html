@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>Admin Dashboard</h3>
+    <a class="btn btn-outline-secondary" href="{{ url_for('admin_logout') }}">Logout Admin</a>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-6">
+      <div class="card">
+        <div class="card-header"><strong>Places</strong></div>
+        <div class="card-body p-0">
+          <div class="list-group list-group-flush">
+            {% for p in places %}
+            <div class="list-group-item">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <div class="fw-semibold">{{ p.name }}</div>
+                  <div class="small text-muted">#{{ p.id }} • {{ p.cuisine_types }} • {{ p.latitude }}, {{ p.longitude }}</div>
+                </div>
+                <form method="post" action="{{ url_for('admin_delete_place', place_id=p.id) }}" onsubmit="return confirm('Delete this place and all related data?');">
+                  <button class="btn btn-sm btn-danger">Delete</button>
+                </form>
+              </div>
+            </div>
+            {% else %}
+            <div class="list-group-item">No places.</div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card">
+        <div class="card-header"><strong>Reviews</strong></div>
+        <div class="card-body p-0">
+          <div class="list-group list-group-flush">
+            {% for r in reviews %}
+            <div class="list-group-item">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <div class="fw-semibold">Review #{{ r.id }} on Place #{{ r.place_id }}</div>
+                  <div class="small text-muted">Rating: {{ r.rating }} • ${{ r.cost }} • {{ r.text | default('') }}</div>
+                </div>
+                <form method="post" action="{{ url_for('admin_delete_review', review_id=r.id) }}" onsubmit="return confirm('Delete this review?');">
+                  <button class="btn btn-sm btn-danger">Delete</button>
+                </form>
+              </div>
+            </div>
+            {% else %}
+            <div class="list-group-item">No reviews.</div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

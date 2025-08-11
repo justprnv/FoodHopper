@@ -1,0 +1,5 @@
+body { background: #f8f9fa; }
+#map { min-height: 60vh; }
+.carousel-item img { max-height: 60vh; object-fit: cover; }
+#placeImages img { height: 90px; width: 120px; object-fit: cover; border-radius: 8px; }
+.leaflet-container { font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif; }

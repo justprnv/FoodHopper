@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-4">
+  <h3 class="mb-3">Vendor Portal</h3>
+  <p class="text-muted">Manage your places. Use the main page button "Add a place to FoodHopper" to add more.</p>
+  <div class="row g-3">
+    {% for p in places %}
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">{{ p.name }}</h5>
+          <p class="card-text">{{ p.description }}</p>
+          <p class="mb-1"><strong>Cuisines:</strong> {{ p.cuisine_types }}</p>
+          <p class="mb-1"><strong>Diet:</strong> {{ p.diet_options }}</p>
+          <p class="mb-1"><strong>Price:</strong> {{ p.price_min }} - {{ p.price_max }}</p>
+          <p class="mb-1"><strong>Hours:</strong> {{ p.hours }}</p>
+          <p class="mb-1"><strong>Contact:</strong> {{ p.contact_info }}</p>
+          <a class="btn btn-sm btn-outline-primary" href="{{ url_for('index') }}#map">View on Map</a>
+        </div>
+      </div>
+    </div>
+    {% else %}
+    <div class="col-12">
+      <div class="alert alert-info">No places yet. Use the main page to add one by clicking on the map.</div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

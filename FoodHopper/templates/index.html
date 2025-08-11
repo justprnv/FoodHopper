@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+{% block content %}
+<div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+  <div class="carousel-indicators">
+    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true"></button>
+    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+  </div>
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <img src="https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=1600&auto=format&fit=crop" class="d-block w-100" alt="Food 1">
+      <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded p-2">
+        <h5>Discover local eats</h5>
+        <p>Find hidden gems added by the community</p>
+      </div>
+    </div>
+    <div class="carousel-item">
+      <img src="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?q=80&w=1600&auto=format&fit=crop" class="d-block w-100" alt="Food 2">
+      <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded p-2">
+        <h5>Add your favorite spots</h5>
+        <p>Click on the map to add any place</p>
+      </div>
+    </div>
+    <div class="carousel-item">
+      <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1600&auto=format&fit=crop" class="d-block w-100" alt="Food 3">
+      <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded p-2">
+        <h5>Review, rate, and favorite</h5>
+        <p>Help others choose where to eat</p>
+      </div>
+    </div>
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+
+<section class="container my-4">
+  <div class="row g-2 align-items-end">
+    <div class="col-12 col-md-4">
+      <label class="form-label">Search cuisines (comma separated)</label>
+      <input type="text" id="searchCuisine" class="form-control" placeholder="e.g., indian, pizza, sushi" />
+    </div>
+    <div class="col-6 col-md-2">
+      <label class="form-label">Price min</label>
+      <input type="number" id="priceMin" class="form-control" placeholder="0" min="0" />
+    </div>
+    <div class="col-6 col-md-2">
+      <label class="form-label">Price max</label>
+      <input type="number" id="priceMax" class="form-control" placeholder="100" min="0" />
+    </div>
+    <div class="col-12 col-md-3">
+      <label class="form-label">Dietary options</label>
+      <input type="text" id="dietOptions" class="form-control" placeholder="e.g., vegan, halal, gluten-free" />
+    </div>
+    <div class="col-12 col-md-1 d-grid">
+      <button id="btnApplyFilters" class="btn btn-primary">Filter</button>
+    </div>
+  </div>
+</section>
+
+<section class="container-fluid px-0">
+  <div id="map" style="height: 70vh;"></div>
+</section>
+
+<div class="modal fade" id="addPlaceModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <form id="addPlaceForm">
+        <div class="modal-header">
+          <h5 class="modal-title">Add a place to FoodHopper</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          {% if not current_user.is_authenticated %}
+          <div class="alert alert-info">Please login to add a place.</div>
+          {% endif %}
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Name</label>
+              <input required type="text" class="form-control" name="name" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Cuisine types (comma separated)</label>
+              <input type="text" class="form-control" name="cuisine_types" placeholder="indian, chinese, pizza" />
+            </div>
+            <div class="col-12">
+              <label class="form-label">Description</label>
+              <textarea class="form-control" name="description" rows="2"></textarea>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Diet options (comma separated)</label>
+              <input type="text" class="form-control" name="diet_options" placeholder="vegan, halal, gluten-free" />
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Price min</label>
+              <input type="number" class="form-control" name="price_min" min="0" />
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Price max</label>
+              <input type="number" class="form-control" name="price_max" min="0" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Hours</label>
+              <input type="text" class="form-control" name="hours" placeholder="Mon-Fri 9am-9pm" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Contact info</label>
+              <input type="text" class="form-control" name="contact_info" placeholder="phone, email" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Menu URL</label>
+              <input type="url" class="form-control" name="menu_url" placeholder="https://" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Photos</label>
+              <input type="file" class="form-control" name="photos" multiple accept="image/*" />
+            </div>
+            <div class="col-12">
+              <div class="alert alert-secondary py-2">
+                Click any spot on the map to set latitude/longitude. Or enter manually below.
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Latitude</label>
+              <input required type="number" step="any" class="form-control" name="latitude" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Longitude</label>
+              <input required type="number" step="any" class="form-control" name="longitude" />
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          {% if current_user.is_authenticated %}
+          <button type="submit" class="btn btn-primary">Save Place</button>
+          {% else %}
+          <a href="{{ url_for('login') }}" class="btn btn-primary">Login</a>
+          {% endif %}
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="placeDetailModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="placeTitle">Place</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="placeImages" class="mb-3 d-flex gap-2 flex-wrap"></div>
+        <p id="placeDescription" class="mb-2"></p>
+        <p class="mb-1"><strong>Cuisines:</strong> <span id="placeCuisines"></span></p>
+        <p class="mb-1"><strong>Dietary:</strong> <span id="placeDiet"></span></p>
+        <p class="mb-1"><strong>Price:</strong> <span id="placePrice"></span></p>
+        <p class="mb-1"><strong>Hours:</strong> <span id="placeHours"></span></p>
+        <p class="mb-3"><strong>Contact:</strong> <span id="placeContact"></span> <a id="placeMenu" href="#" target="_blank" class="ms-2">Menu</a></p>
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <button id="btnLike" class="btn btn-outline-danger btn-sm">❤ Like (<span id="likeCount">0</span>)</button>
+          <button id="btnFavorite" class="btn btn-outline-warning btn-sm">★ Favorite (<span id="favoriteCount">0</span>)</button>
+          <button id="btnDirections" class="btn btn-outline-primary btn-sm">Get Directions</button>
+        </div>
+        <hr />
+        <h6>Reviews</h6>
+        <div id="reviewsList" class="mb-3"></div>
+        {% if current_user.is_authenticated %}
+        <form id="reviewForm" class="border rounded p-2">
+          <input type="hidden" name="place_id" />
+          <div class="row g-2 align-items-end">
+            <div class="col-3">
+              <label class="form-label">Rating</label>
+              <select class="form-select" name="rating">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5" selected>5</option>
+              </select>
+            </div>
+            <div class="col-3">
+              <label class="form-label">Cost</label>
+              <input type="number" class="form-control" name="cost" min="0" />
+            </div>
+            <div class="col-6">
+              <label class="form-label">Image</label>
+              <input type="file" class="form-control" name="image" accept="image/*" />
+            </div>
+            <div class="col-12">
+              <label class="form-label">Review</label>
+              <textarea class="form-control" name="text" rows="2"></textarea>
+            </div>
+            <div class="col-12 d-grid">
+              <button class="btn btn-success">Post Review</button>
+            </div>
+          </div>
+        </form>
+        {% else %}
+        <div class="alert alert-info">Login to post a review.</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
